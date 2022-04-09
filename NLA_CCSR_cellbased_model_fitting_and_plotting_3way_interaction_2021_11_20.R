@@ -16,6 +16,7 @@ library(ggthemes)
 # Dataset
 # Replace Nitrate 0 Values with half of apparent detection limit
 # Replace temperature values above 50 with NAs
+
 dat <- read.csv("ccsr_cellbased_summaries_2020_10_28.csv") %>%
   select(-c(site_id, uid)) %>% 
   filter(phyto_mean_biovol > 0) %>%
@@ -55,10 +56,10 @@ mod_full <- lm(phyto_total_density ~ phyto_mean_biovol +
                  temp_mean:nitrate_mean + 
                  zoo_total_biomass:nitrate_mean +
                 zoo_total_biomass:nitrate_mean:temp_mean +
-                 phyto_mean_biovol:nitrate_mean:temp_mean +
-                 zoo_total_biomass:phyto_mean_biovol:temp_mean +
-                 zoo_total_biomass:nitrate_mean:phyto_mean_biovol +
-                 phyto_mean_biovol:zoo_total_biomass:nitrate_mean:temp_mean, 
+                 phyto_mean_biovol:nitrate_mean:temp_mean,
+                # zoo_total_biomass:phyto_mean_biovol:temp_mean +
+                # zoo_total_biomass:nitrate_mean:phyto_mean_biovol +
+                # phyto_mean_biovol:zoo_total_biomass:nitrate_mean:temp_mean, 
                data = dat, 
                weights = (1/phyto_se_biovol))
 
@@ -70,10 +71,11 @@ summary(mod_full)
 
 pr <- ggpredict(mod_full, type = "fixed", 
                 terms = c("phyto_mean_biovol",
-                          "zoo_total_biomass [1, 2, 3]",
-                          "nitrate_mean [-3.2, -2.2, -1.2]", "temp_mean [10, 20, 30]"))
+                          "nitrate_mean [-3, -1.5, 0]", "temp_mean [10, 30]", 
+                          "zoo_total_biomass [1, 3]"))
 
-plot(pr, limits = c(0, 8), show.legend = FALSE, colors = "viridis", add.data = TRUE) 
+
+plot(pr, show.legend = TRUE, colors = "viridis") 
 
 
 

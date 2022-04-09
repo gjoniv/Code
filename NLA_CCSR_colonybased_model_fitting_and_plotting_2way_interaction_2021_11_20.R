@@ -34,6 +34,7 @@ dat <- read.csv("ccsr_colonybased_summaries_2020_11_09.csv") %>%
 dat2 <- data.frame(scale(dat[,c(1,3:10)], scale = FALSE), phyto_se_biovol = dat$phyto_se_biovol)
 dat3 <- dat %>%
   mutate(nitrate_mean = replace(nitrate_mean, nitrate_mean == min(nitrate_mean, na.rm = TRUE), NA))
+
 dat3 <- data.frame(scale(dat3[,c(1,3:10)], scale = FALSE), phyto_se_biovol = dat3$phyto_se_biovol)
 
 # Histogram of the Nitrate_mean
@@ -83,25 +84,28 @@ interact_plot(mod_final, pred = phyto_mean_biovol,
               mod2= nitrate_mean, 
               plot.points = TRUE, 
               point.size = 2,
-              interval = TRUE,
+              interval = FALSE,
               modx.values = c(10, 20, 30), 
-              mod2.values = c(-3.2, -2.2, -1.2), 
-              colors = c("blue", "green", "red"), 
+              mod2.values = c(-3, 0), 
+              colors = c("darkblue", "seagreen", "yellow"), 
               x.label = "Log Cell Volume", 
-              y.label = "Log Abundance", 
-              legend.main = "Temperature") + theme_few()
+              y.label = "Log Density", 
+              legend.main = "T (°C)") + theme_few() + 
+  scale_color_viridis(option = "C")
 
 #  #APPENDIX A3
 # Plotting Two-Way Interaction Effects of Regression Models
 interact_plot(mod_final, pred = phyto_mean_biovol, 
               mod2 = temp_mean, 
               modx= nitrate_mean, 
-              mod2.values = c(10, 20, 30), 
-              modx.values = c(-3.2, -2.2, -1.2), 
+              mod2.values = c(10,  30), 
+              modx.values = c(-3, -1.5, 0),
+              colors = c("orange", "purple", "darkblue"), 
               plot.points = TRUE, 
               point.size = 2, 
-              interval = TRUE,
-              colors = c("darkgreen", "green", "darkorange"), 
+              interval = FALSE,
               x.label = "Log Cell Volume", 
-              y.label = "Log Abundance", 
-              legend.main = "Nuntrient") + theme_few()
+              y.label = "Log Density", 
+              legend.main = "N (mg/L)") + theme_few() + 
+  scale_color_viridis(option = "D", direction = -1)
+
